@@ -1,0 +1,15 @@
+{
+  "name": "shortest-path-in-diagram",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Livoras",
+  "license": "MIT",
+  "devDependencies": {
+    "tslint-eslint-rules": "^5.4.0",
+    "tslint-sonarts": "^1.9.0"
+  }
+}
