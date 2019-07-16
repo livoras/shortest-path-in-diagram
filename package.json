@@ -9,7 +9,13 @@
   "author": "Livoras",
   "license": "MIT",
   "devDependencies": {
+    "@types/node-dijkstra": "^2.5.0",
+    "tslint": "^5.18.0",
     "tslint-eslint-rules": "^5.4.0",
-    "tslint-sonarts": "^1.9.0"
+    "tslint-sonarts": "^1.9.0",
+    "typescript": "^3.5.3"
+  },
+  "dependencies": {
+    "node-dijkstra": "^2.5.0"
   }
 }
