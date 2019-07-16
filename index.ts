@@ -117,9 +117,11 @@ const makeGraphByPoints = (rect1: Rectangle, rect2: Rectangle, points: Point[], 
         }
 
         const tPathName = `(${tx},${ty})`
-        // 交叉点优先经过
-        const isCenter = (tx === cross.x && ty === cross.y)
-        currentPath[tPathName] = Math.abs(tx - x) + Math.abs(ty - y) + (isCenter ? -1 : 0)
+        // 中心点相关优先通过
+        const isCenterX = tx === cross.x
+        const isCenterY = ty === cross.y
+        const isBetterPoint = isCenterX || isCenterY
+        currentPath[tPathName] = Math.abs(tx - x) + Math.abs(ty - y) + (isBetterPoint ? -1 : 0)
       })
       graph.addNode(currentPathName, currentPath)
     })
@@ -150,11 +152,13 @@ const getRectPoints = (rect: Rectangle): Point[] => {
 const test = () => {
   return getShortestPath(
     { left: 10, top: 10, width: 100, height: 100 },
-    { x: 10, y: 20 },
+    // { x: 10, y: 20 },
+    { x: 50, y: 10 },
     Direction.BOTTOM,
 
     { left: 130, top: 130, width: 50, height: 100 },
-    { x: 180, y: 180 },
+    // { x: 180, y: 180 },
+    { x: 140, y: 230 },
     Direction.BOTTOM,
   )
 }
