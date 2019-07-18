@@ -16,6 +16,7 @@
     "typescript": "^3.5.3"
   },
   "dependencies": {
-    "node-dijkstra": "^2.5.0"
+    "node-dijkstra": "^2.5.0",
+    "tinyqueue": "^2.0.3"
   }
 }

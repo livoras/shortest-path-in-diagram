@@ -3,7 +3,6 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": { "*": ["types/*"] },
-    "strict": true,
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "suppressImplicitAnyIndexErrors": true,

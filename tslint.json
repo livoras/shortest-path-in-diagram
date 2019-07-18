@@ -22,6 +22,7 @@
   },
   "linterOptions": {
     "exclude": [
+      "./lib/**",
       "packages/mini/src/pages/services/route.service.ts",
       "**/packages/**/node_modules/**",
       "**/packages/**/typings/**",
