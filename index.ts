@@ -22,77 +22,6 @@ const enum Direction {
   LEFT = "LEFT",
 }
 
-/** end point direction */
-const enum E {
-  A, B, C, D,
-  E, F, G, H,
-  I, J, K, L,
-  M, N, O, P,
-}
-
-const enum I {
-  /** inflection point */
-  a, b, c, d, e,
-  f, g, h, i, j,
-  k, l, m, n, o,
-  p, q, r, s, t,
-  u, v, w, x, y,
-  /** cross point with previous x and next y */
-  pxny,
-  /** cross point with next x and previous y */
-  nxpy,
-}
-
-实际上只有三种情况：
-
-1. 完全同向问题（非常简单）
-2. 完全逆向问题（非常简单）
-  1.1 有中点
-  1.2 无中点
-3. 其他向问题：转化为 1 和 2 问题后对比找到相对小的路径
-
-const PATHS = {
-  "A->M": [[[I.pxny]]],
-  "A->N": [[[I.pxny, I.m, I.nxpy]], [[I.a, I.nxpy]]],
-  "A->O": [[[I.pxny, I.m, I.nxpy]]],
-  "A->P": [[[I.pxny]]],
-
-  "B->M": [[[I.nxpy, I.m, I.pxny]], [[I.a, I.pxny]]],
-  "B->N": [[[I.nxpy]]],
-  "B->O": [[[I.nxpy]]],
-  "B->P": [[[I.nxpy, I.m, I.pxny]], []],
-
-  "C->M": [[], []],
-  "C->N": [[], []],
-  "C->O": [[], []],
-  "C->P": [[], []],
-
-  "D->M": [[], []],
-  "D->N": [[], []],
-  "D->O": [[], []],
-  "D->P": [[], []],
-
-  "E->I": [[], []],
-  "E->J": [[], []],
-  "E->K": [[], []],
-  "E->L": [[], []],
-
-  "F->I": [[], []],
-  "F->J": [[], []],
-  "F->K": [[], []],
-  "F->L": [[], []],
-
-  "G->I": [[], []],
-  "G->J": [[], []],
-  "G->K": [[], []],
-  "G->L": [[], []],
-
-  "H->I": [[], []],
-  "H->J": [[], []],
-  "H->K": [[], []],
-  "H->L": [[], []],
-}
-
 export const getShortestPath = (
   fromRect: Rectangle,
   fromPoint: Point,
@@ -130,9 +59,9 @@ export const getShortestPath = (
     centerRightPoint,
     centerCrossPoint,
   ]
-  
+
   const graph = makeGraphByPoints(toRect, fromRect, crucialPoints, centerCrossPoint)
-  return dijkstraPathByGraph(fromPoint, toPoint, graph)
+  return dijkstraPathByGraph(fromPoint, toPoint, graph, fromDirection)
 }
 
 const makeGraphByPoints = (rect1: Rectangle, rect2: Rectangle, points: Point[], cross: Point): Graph => {
@@ -194,7 +123,10 @@ const makeGraphByPoints = (rect1: Rectangle, rect2: Rectangle, points: Point[], 
         // 中心点相关优先通过
         const isCenterX = tx === cross.x
         const isCenterY = ty === cross.y
-        const isBetterPoint = isCenterX && isCenterY
+        const isBetterPoint = (isCenterX && isCenterY)
+        // ||
+        //   (tx === 12 && ty === 12) ||
+        //   (tx === 11 && ty === 12)
         currentPath.set(tPathName, Math.abs(tx - x) + Math.abs(ty - y) + (isBetterPoint ? -1 : 0))
       })
       graph.set(currentPathName, currentPath)
@@ -217,30 +149,30 @@ interface IPathCost {
   previous: IPathCost,
 }
 
-const dijkstraPathByGraph = (from: Point | string, to: Point | string, graph: Graph): string[] => {
+const dijkstraPathByGraph = (
+  from: Point | string,
+  to: Point | string,
+  graph: Graph,
+  initDirection: Direction,
+): string[] => {
   const candidatesQueue = new PriorityQueue()
   const queueCost = new Map<string, IPathCost>()
   const explored = new Set<string>()
 
-  const fromName = typeof from === 'string' ? from : `${from.x},${from.y}`
-  const toName = typeof to === 'string' ? to : `${to.x},${to.y}`
+  const fromName = typeof from === "string" ? from : `${from.x},${from.y}`
+  const toName = typeof to === "string" ? to : `${to.x},${to.y}`
   graph.forEach((v, k) => candidatesQueue.add(k, INF_NUMBER))
   candidatesQueue.changePriority(fromName, 0)
-  queueCost.set(fromName, { name: fromName, cost: 0, previous: null, direction: null })
-  console.log(graph)
+  queueCost.set(fromName, { name: fromName, cost: 0, previous: null, direction: initDirection })
 
   while (!candidatesQueue.isEmpty()) {
     const min = candidatesQueue.poll()
-    // console.log(min, '-->')
-    // console.log(min, queueCost.get(min))
     const currentCost = queueCost.get(min)
     const neighbors = graph.get(min)
-    // console.log(min, neighbors)
     if (neighbors) {
       neighbors.forEach((dist, neighborName) => {
         if (explored.has(neighborName)) { return }
         let cost = currentCost.cost + dist
-        candidatesQueue.changePriority(neighborName, cost)
         let neighborCost: IPathCost
         if (!queueCost.has(neighborName)) {
           neighborCost = { name: neighborName, cost: INF_NUMBER, previous: null, direction: null }
@@ -248,28 +180,41 @@ const dijkstraPathByGraph = (from: Point | string, to: Point | string, graph: Gr
         } else {
           neighborCost = queueCost.get(neighborName)
         }
-        neighborCost.direction = getDirection(min, neighborName)
-        // if (neighborCost.direction === currentCost.direction) {
-        //   cost -= 2
-        //   console.log("same direction...", min, '->', neighborName, cost)
-        // }
+        const newDirection = getDirection(min, neighborName)
+        if (min === '5,15' && neighborName === '10,15') {
+          console.log('fuck')
+        }
+        if (newDirection === currentCost.direction) {
+          // if ([ '5,10', '5,11', '5,12', '5,15', '10,15', '11,15', '12,15' ].includes(min)) {
+          cost -= 2
+          console.log("same direction...", min, '->', neighborName, cost)
+          // }
+        }
         if (cost < neighborCost.cost) {
+          candidatesQueue.changePriority(neighborName, cost)
+          neighborCost.direction = newDirection
           neighborCost.cost = cost
           neighborCost.previous = currentCost
         }
       })
     }
-    candidatesQueue.remove(min)
+    // candidatesQueue.remove(min)
+    // console.log(candidatesQueue.heapContainer.length)
     explored.add(min)
     const minCostPath = queueCost.get(min)
+    if (min === '5,12') {
+      console.log(candidatesQueue.priorities)
+    }
     if (min === toName) {
       let node = minCostPath
       const path = []
       while (node) {
         path.push(node.name)
+        console.log(node.name, node.direction, node.cost)
         node = node.previous
+        // console.log(minCostPath)
       }
-      // console.log(queueCost)
+      console.log(minCostPath.cost)
       return path.reverse()
     }
   }
@@ -314,7 +259,7 @@ const test = () => {
     Direction.BOTTOM,
 
     { left: 12, top: 12, width: 10, height: 10 },
-    { x: 12, y: 12 },
+    { x: 12, y: 15 },
     // { left: 130, top: 130, width: 50, height: 100 },
     // { x: 140, y: 230 },
     // { x: 180, y: 180 },
@@ -338,7 +283,7 @@ const test2 = () => {
   graph.set("E", new Map([
     ["B", 60],
   ]))
-  const path = dijkstraPathByGraph("A", "B", graph)
+  const path = dijkstraPathByGraph("A", "B", graph, Direction.BOTTOM)
   return path
 }
 
