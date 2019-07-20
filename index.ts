@@ -167,9 +167,18 @@ const dijkstraPathByGraph = (
 
   while (!candidatesQueue.isEmpty()) {
     const min = candidatesQueue.poll()
+    // console.log("========================\n\n")
+    // candidatesQueue.priorities.forEach((v, k) => {
+    //   if (v !== INF_NUMBER && !explored.has(k)) {
+    //     console.log(k, "=>", v)
+    //   }
+    // })
+    // console.log('min is ', min)
+    // candidatesQueue.remove(min)
     const currentCost = queueCost.get(min)
     const neighbors = graph.get(min)
     if (neighbors) {
+      // console.log("--------------")
       neighbors.forEach((dist, neighborName) => {
         if (explored.has(neighborName)) { return }
         let cost = currentCost.cost + dist
@@ -181,15 +190,15 @@ const dijkstraPathByGraph = (
           neighborCost = queueCost.get(neighborName)
         }
         const newDirection = getDirection(min, neighborName)
-        if (min === '5,15' && neighborName === '10,15') {
-          console.log('fuck')
-        }
         if (newDirection === currentCost.direction) {
           // if ([ '5,10', '5,11', '5,12', '5,15', '10,15', '11,15', '12,15' ].includes(min)) {
-          cost -= 2
-          console.log("same direction...", min, '->', neighborName, cost)
+          cost -= dist * 0.5
+          // console.log("same direction...", min, '->', neighborName, cost)
           // }
         }
+        // if ([ '5,10', '5,11', '5,12', '5,15'].includes(min)) {
+        // console.log(`${min} -> ${neighborName} cost: `, cost)
+        // }
         if (cost < neighborCost.cost) {
           candidatesQueue.changePriority(neighborName, cost)
           neighborCost.direction = newDirection
@@ -202,19 +211,17 @@ const dijkstraPathByGraph = (
     // console.log(candidatesQueue.heapContainer.length)
     explored.add(min)
     const minCostPath = queueCost.get(min)
-    if (min === '5,12') {
-      console.log(candidatesQueue.priorities)
-    }
     if (min === toName) {
+      // console.log("********************************")
       let node = minCostPath
       const path = []
       while (node) {
         path.push(node.name)
-        console.log(node.name, node.direction, node.cost)
+        // console.log(node.name, node.direction, node.cost)
         node = node.previous
         // console.log(minCostPath)
       }
-      console.log(minCostPath.cost)
+      // console.log(minCostPath.cost)
       return path.reverse()
     }
   }
@@ -259,6 +266,7 @@ const test = () => {
     Direction.BOTTOM,
 
     { left: 12, top: 12, width: 10, height: 10 },
+    // { x: 15, y: 12 },
     { x: 12, y: 15 },
     // { left: 130, top: 130, width: 50, height: 100 },
     // { x: 140, y: 230 },
