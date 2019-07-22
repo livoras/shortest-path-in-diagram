@@ -104,7 +104,7 @@ export const getShortestPath = (
 
   const isFromPointOnLeft = fromPoint.x < toPoint.x
 
-  /** 需要经过水平的中线的情况 */
+  /** ===================== 需要经过水平的中线的情况 ================================ */
   if (
     isTopDown &&
     (isFromPointOnLeft && isBottomLeft(fromDirection) && isTopRight(toDirection)) ||
@@ -114,16 +114,9 @@ export const getShortestPath = (
       return [fromPoint, PXNY, centerCrossPoint, NXPY, toPoint]
     } else {
       if (hasVerticalGap)  {
-        let inf1: IPoint
-        let inf2: IPoint
-        if (isTopDown) {
-          inf1 = c
-          inf2 = e
-        } else {
-          inf1 = b
-          inf2 = h
-        }
-        return [fromPoint, PXNY, inf1, NXPY, centerCrossPoint, PXNY, inf2, toPoint]
+        const inf1: IPoint = isFromPointOnLeft ? c : e
+        const inf2: IPoint = isFromPointOnLeft ? e : c
+        return [fromPoint, PXNY, inf1, NXPY, centerCrossPoint, PXNY, inf2, NXPY, toPoint]
       } else {
         // TODO
       }
@@ -139,23 +132,16 @@ export const getShortestPath = (
       return [fromPoint, PXNY, centerCrossPoint, NXPY, toPoint]
     } else {
       if (hasVerticalGap)  {
-        let inf1: IPoint
-        let inf2: IPoint
-        if (isTopDown) {
-          inf1 = c
-          inf2 = e
-        } else {
-          inf1 = b
-          inf2 = h
-        }
-        return [fromPoint, PXNY, inf1, NXPY, centerCrossPoint, PXNY, inf2, toPoint]
+        const inf1: IPoint = isFromPointOnLeft ? b : h
+        const inf2: IPoint = isFromPointOnLeft ? h : b
+        return [fromPoint, PXNY, inf1, NXPY, centerCrossPoint, PXNY, inf2, NXPY, toPoint]
       } else {
         // TODO
       }
     }
   }
 
-  /** 需要经过垂直的中线的情况 */
+  /** ===================== 需要经过垂直的中线的情况 ================================ */
   if (
     isTopDown &&
     (isFromPointOnLeft && isTopRight(fromDirection) && isBottomLeft(toDirection)) ||
@@ -164,9 +150,10 @@ export const getShortestPath = (
     if (hasVerticalGap) {
       return [fromPoint, NXPY, centerCrossPoint, PXNY, toPoint]
     } else {
-      // TODO
       if (hasHorizentalGap)  {
-        // TODO
+        const inf1 = isFromPointOnLeft ? e : c
+        const inf2 = isFromPointOnLeft ? c : e
+        return [fromPoint, NXPY, inf1, PXNY, centerCrossPoint, NXPY, inf2, PXNY, toPoint]
       } else {
         // TODO
       }
@@ -181,9 +168,10 @@ export const getShortestPath = (
     if (hasVerticalGap) {
       return [fromPoint, NXPY, centerCrossPoint, PXNY, toPoint]
     } else {
-      // TODO
       if (hasHorizentalGap)  {
-        // TODO
+        const inf1 = isFromPointOnLeft ? h : b
+        const inf2 = isFromPointOnLeft ? b : h
+        return [fromPoint, NXPY, inf1, PXNY, centerCrossPoint, NXPY, inf2, PXNY, toPoint]
       } else {
         // TODO
       }
