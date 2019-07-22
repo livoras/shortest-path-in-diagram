@@ -103,6 +103,7 @@ export const getShortestPath = (
   }
 
   const isFromPointOnLeft = fromPoint.x < toPoint.x
+  const isFromPointOnTop = fromPoint.y < toPoint.y
 
   /** ===================== 需要经过水平的中线的情况 ================================ */
   if (
@@ -144,15 +145,15 @@ export const getShortestPath = (
   /** ===================== 需要经过垂直的中线的情况 ================================ */
   if (
     isTopDown &&
-    (isFromPointOnLeft && isTopRight(fromDirection) && isBottomLeft(toDirection)) ||
-    (!isFromPointOnLeft && isTopRight(toDirection) && isBottomLeft(fromDirection))
+    (isFromPointOnTop && isTopRight(fromDirection) && isBottomLeft(toDirection)) ||
+    (!isFromPointOnTop && isTopRight(toDirection) && isBottomLeft(fromDirection))
   ) {
     if (hasVerticalGap) {
       return [fromPoint, NXPY, centerCrossPoint, PXNY, toPoint]
     } else {
       if (hasHorizentalGap)  {
-        const inf1 = isFromPointOnLeft ? e : c
-        const inf2 = isFromPointOnLeft ? c : e
+        const inf1 = isFromPointOnTop ? c : e
+        const inf2 = isFromPointOnTop ? e : c
         return [fromPoint, NXPY, inf1, PXNY, centerCrossPoint, NXPY, inf2, PXNY, toPoint]
       } else {
         // TODO
@@ -162,15 +163,15 @@ export const getShortestPath = (
 
   if (
     !isTopDown &&
-    (isFromPointOnLeft && isTopLeft(fromDirection) && isBottomRight(toDirection)) ||
-    (!isFromPointOnLeft && isTopLeft(fromDirection) && isBottomRight(toDirection))
+    (isFromPointOnTop && isTopLeft(fromDirection) && isBottomRight(toDirection)) ||
+    (!isFromPointOnTop && isTopLeft(toDirection) && isBottomRight(fromDirection))
   ) {
     if (hasVerticalGap) {
       return [fromPoint, NXPY, centerCrossPoint, PXNY, toPoint]
     } else {
       if (hasHorizentalGap)  {
-        const inf1 = isFromPointOnLeft ? h : b
-        const inf2 = isFromPointOnLeft ? b : h
+        const inf1 = isFromPointOnTop ? h : b
+        const inf2 = isFromPointOnTop ? b : h
         return [fromPoint, NXPY, inf1, PXNY, centerCrossPoint, NXPY, inf2, PXNY, toPoint]
       } else {
         // TODO
