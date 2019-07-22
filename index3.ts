@@ -113,9 +113,17 @@ export const getShortestPath = (
     if (hasHorizentalGap) {
       return [fromPoint, PXNY, centerCrossPoint, NXPY, toPoint]
     } else {
-      // TODO
       if (hasVerticalGap)  {
-        // TODO
+        let inf1: IPoint
+        let inf2: IPoint
+        if (isTopDown) {
+          inf1 = c
+          inf2 = e
+        } else {
+          inf1 = b
+          inf2 = h
+        }
+        return [fromPoint, PXNY, inf1, NXPY, centerCrossPoint, PXNY, inf2, toPoint]
       } else {
         // TODO
       }
@@ -130,9 +138,17 @@ export const getShortestPath = (
     if (hasHorizentalGap) {
       return [fromPoint, PXNY, centerCrossPoint, NXPY, toPoint]
     } else {
-      // TODO
       if (hasVerticalGap)  {
-        // TODO
+        let inf1: IPoint
+        let inf2: IPoint
+        if (isTopDown) {
+          inf1 = c
+          inf2 = e
+        } else {
+          inf1 = b
+          inf2 = h
+        }
+        return [fromPoint, PXNY, inf1, NXPY, centerCrossPoint, PXNY, inf2, toPoint]
       } else {
         // TODO
       }
