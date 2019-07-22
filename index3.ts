@@ -102,14 +102,16 @@ export const getShortestPath = (
     return [fromPoint, mid, toPoint]
   }
 
+  const isFromPointOnLeft = fromPoint.x < toPoint.x
+
   /** 需要经过水平的中线的情况 */
   if (
     isTopDown &&
-    (fromPoint.x < toPoint.x && isBottomLeft(fromDirection) && isTopRight(toDirection)) ||
-    (fromPoint.x > toPoint.x && isBottomLeft(toDirection) && isTopRight(fromDirection))
+    (isFromPointOnLeft && isBottomLeft(fromDirection) && isTopRight(toDirection)) ||
+    (!isFromPointOnLeft && isBottomLeft(toDirection) && isTopRight(fromDirection))
   ) {
     if (hasHorizentalGap) {
-      // TODO
+      return [fromPoint, PXNY, centerCrossPoint, NXPY, toPoint]
     } else {
       // TODO
       if (hasVerticalGap)  {
@@ -122,11 +124,11 @@ export const getShortestPath = (
 
   if (
     !isTopDown &&
-    (fromPoint.x < toPoint.x && isTopLeft(fromDirection) && isBottomRight(toDirection)) ||
-    (fromPoint.x > toPoint.x && isTopLeft(toDirection) && isBottomRight(fromDirection))
+    (isFromPointOnLeft && isTopLeft(fromDirection) && isBottomRight(toDirection)) ||
+    (!isFromPointOnLeft && isTopLeft(toDirection) && isBottomRight(fromDirection))
   ) {
     if (hasHorizentalGap) {
-      // TODO
+      return [fromPoint, PXNY, centerCrossPoint, NXPY, toPoint]
     } else {
       // TODO
       if (hasVerticalGap)  {
@@ -140,11 +142,11 @@ export const getShortestPath = (
   /** 需要经过垂直的中线的情况 */
   if (
     isTopDown &&
-    (fromPoint.x < toPoint.x && isTopRight(fromDirection) && isBottomLeft(toDirection)) ||
-    (fromPoint.x > toPoint.x && isTopRight(toDirection) && isBottomLeft(fromDirection))
+    (isFromPointOnLeft && isTopRight(fromDirection) && isBottomLeft(toDirection)) ||
+    (!isFromPointOnLeft && isTopRight(toDirection) && isBottomLeft(fromDirection))
   ) {
     if (hasVerticalGap) {
-      // TODO
+      return [fromPoint, NXPY, centerCrossPoint, PXNY, toPoint]
     } else {
       // TODO
       if (hasHorizentalGap)  {
@@ -157,11 +159,11 @@ export const getShortestPath = (
 
   if (
     !isTopDown &&
-    (fromPoint.x < toPoint.x && isTopLeft(fromDirection) && isBottomRight(toDirection)) ||
-    (fromPoint.x > toPoint.x && isTopLeft(fromDirection) && isBottomRight(toDirection))
+    (isFromPointOnLeft && isTopLeft(fromDirection) && isBottomRight(toDirection)) ||
+    (!isFromPointOnLeft && isTopLeft(fromDirection) && isBottomRight(toDirection))
   ) {
     if (hasVerticalGap) {
-      // TODO
+      return [fromPoint, NXPY, centerCrossPoint, PXNY, toPoint]
     } else {
       // TODO
       if (hasHorizentalGap)  {
