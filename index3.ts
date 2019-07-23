@@ -119,7 +119,23 @@ export const getShortestPath = (
         const inf2: IPoint = isFromPointOnLeft ? e : c
         return [fromPoint, PXNY, inf1, NXPY, centerCrossPoint, PXNY, inf2, NXPY, toPoint]
       } else {
-        // TODO
+        const candidates = []
+        // left -> top
+
+        // left -> right
+
+        // bottom -> top
+
+        // bottom -> right
+
+        // top -> left
+
+        // top -> bottom
+
+        // right -> left
+
+        // right -> bottom
+        return minPaths(candidates)
       }
     }
   }
@@ -137,7 +153,23 @@ export const getShortestPath = (
         const inf2: IPoint = isFromPointOnLeft ? h : b
         return [fromPoint, PXNY, inf1, NXPY, centerCrossPoint, PXNY, inf2, NXPY, toPoint]
       } else {
-        // TODO
+        const candidates = []
+        // top -> bottom
+
+        // top -> right
+
+        // left -> bottom
+
+        // left -> right
+
+        // bottom -> top
+
+        // bottom -> left
+
+        // right -> top
+
+        // right -> left
+        return minPaths(candidates)
       }
     }
   }
@@ -156,7 +188,23 @@ export const getShortestPath = (
         const inf2 = isFromPointOnTop ? e : c
         return [fromPoint, NXPY, inf1, PXNY, centerCrossPoint, NXPY, inf2, PXNY, toPoint]
       } else {
-        // TODO
+        const candidates = []
+        // top -> bottom
+
+        // top -> left
+
+        // right -> bottom
+
+        // right -> left
+
+        // bottom -> top
+
+        // bottom -> right
+
+        // left -> top
+
+        // left -> right
+        return minPaths(candidates)
       }
     }
   }
@@ -174,10 +222,30 @@ export const getShortestPath = (
         const inf2 = isFromPointOnTop ? b : h
         return [fromPoint, NXPY, inf1, PXNY, centerCrossPoint, NXPY, inf2, PXNY, toPoint]
       } else {
-        // TODO
+        const candidates = []
+        // top -> bottom
+
+        // top -> right
+
+        // left -> bottom
+
+        // left -> right
+
+        // bottom -> top
+
+        // bottom -> left
+
+        // right -> top
+
+        // right - > left
+        return minPaths(candidates)
       }
     }
   }
+}
+
+const minPaths = (candidates: Path[]): Path => {
+  return []
 }
 
 const getRectPoints = (rect: IRectangle): IPoint[] => {
