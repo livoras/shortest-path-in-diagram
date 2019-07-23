@@ -121,20 +121,45 @@ export const getShortestPath = (
       } else {
         const candidates = []
         // left -> top
-
         // left -> right
+        if (
+          fromDirection === Direction.LEFT &&
+          (toDirection === Direction.TOP || toDirection === Direction.RIGHT)
+        ) {
+          candidates.push([fromDirection, a, NXPY, toDirection])
+          candidates.push([fromDirection, PXNY, h, g, PXNY, toDirection])
+        }
 
         // bottom -> top
-
         // bottom -> right
+        if (
+          fromDirection === Direction.BOTTOM &&
+          (toDirection === Direction.TOP || toDirection === Direction.RIGHT)
+        ) {
+          candidates.push([fromDirection, d, a, NXPY, toDirection])
+          candidates.push([fromDirection, PXNY, h, g, PXNY, toDirection])
+        }
 
         // top -> left
-
         // top -> bottom
+        if (
+          fromDirection === Direction.TOP &&
+          (toDirection === Direction.LEFT || toDirection === Direction.BOTTOM)
+        ) {
+          candidates.push([fromDirection, NXPY, b, a, PXNY, toDirection])
+          candidates.push([fromDirection, f, g, NXPY, toDirection])
+        }
 
         // right -> left
-
         // right -> bottom
+        if (
+          fromDirection === Direction.RIGHT &&
+          (toDirection === Direction.LEFT || toDirection === Direction.BOTTOM)
+        ) {
+          candidates.push([fromDirection, g, NXPY, toDirection])
+          candidates.push([fromDirection, NXPY, b, a, PXNY, toDirection])
+        }
+
         return minPaths(candidates)
       }
     }
