@@ -396,8 +396,8 @@ const ret = getShortestPath(
   // { x: 50, y: 10 },
   Direction.BOTTOM,
 
-  { left: 8, top: 8, width: 10, height: 10 },
-  { x: 17, y: 8 },
+  { left: 12, top: 12, width: 10, height: 10 },
+  { x: 18, y: 12 },
   // { x: 12, y: 15 },
   // { left: 130, top: 130, width: 50, height: 100 },
   // { x: 140, y: 230 },
