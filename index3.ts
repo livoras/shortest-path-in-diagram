@@ -34,7 +34,7 @@ const isTopBottom = (d: Direction): boolean => TOP_BOTTOM.includes(d)
 const PXNY = "PXNY"
 const NXPY = "NXPY"
 
-export const getShortestPathRaw = (
+export const getShortestPath = (
   fromRect: IRectangle,
   fromPoint: IPoint,
   fromDirection: Direction,
@@ -126,8 +126,8 @@ export const getShortestPathRaw = (
           fromDirection === Direction.LEFT &&
           (toDirection === Direction.TOP || toDirection === Direction.RIGHT)
         ) {
-          candidates.push(p([fromDirection, a, NXPY, toDirection]))
-          candidates.push(p([fromDirection, PXNY, g, PXNY, toDirection]))
+          candidates.push(p([fromPoint, a, NXPY, toPoint]))
+          candidates.push(p([fromPoint, PXNY, g, PXNY, toPoint]))
         }
 
         // bottom -> top
@@ -136,8 +136,8 @@ export const getShortestPathRaw = (
           fromDirection === Direction.BOTTOM &&
           (toDirection === Direction.TOP || toDirection === Direction.RIGHT)
         ) {
-          candidates.push(p([fromDirection, d, a, NXPY, toDirection]))
-          candidates.push(p([fromDirection, PXNY, g, PXNY, toDirection]))
+          candidates.push(p([fromPoint, d, a, NXPY, toPoint]))
+          candidates.push(p([fromPoint, PXNY, g, PXNY, toPoint]))
         }
 
         // top -> left
@@ -146,8 +146,8 @@ export const getShortestPathRaw = (
           fromDirection === Direction.TOP &&
           (toDirection === Direction.LEFT || toDirection === Direction.BOTTOM)
         ) {
-          candidates.push(p([fromDirection, NXPY, a, PXNY, toDirection]))
-          candidates.push(p([fromDirection, f, g, NXPY, toDirection]))
+          candidates.push(p([fromPoint, NXPY, a, PXNY, toPoint]))
+          candidates.push(p([fromPoint, f, g, NXPY, toPoint]))
         }
 
         // right -> left
@@ -156,8 +156,8 @@ export const getShortestPathRaw = (
           fromDirection === Direction.RIGHT &&
           (toDirection === Direction.LEFT || toDirection === Direction.BOTTOM)
         ) {
-          candidates.push(p([fromDirection, g, NXPY, toDirection]))
-          candidates.push(p([fromDirection, NXPY, a, PXNY, toDirection]))
+          candidates.push(p([fromPoint, g, NXPY, toPoint]))
+          candidates.push(p([fromPoint, NXPY, a, PXNY, toPoint]))
         }
 
         return minPaths(candidates)
@@ -185,8 +185,8 @@ export const getShortestPathRaw = (
           fromDirection === Direction.TOP &&
           (toDirection === Direction.BOTTOM || toDirection === Direction.RIGHT)
         ) {
-          candidates.push(p([fromDirection, PXNY, f, PXNY, toDirection]))
-          candidates.push(p([fromDirection, NXPY, d, NXPY, toDirection]))
+          candidates.push(p([fromPoint, PXNY, f, PXNY, toPoint]))
+          candidates.push(p([fromPoint, NXPY, d, NXPY, toPoint]))
         }
 
         // left -> bottom
@@ -195,8 +195,8 @@ export const getShortestPathRaw = (
           fromDirection === Direction.LEFT &&
           (toDirection === Direction.BOTTOM || toDirection === Direction.RIGHT)
         ) {
-          candidates.push(p([fromDirection, PXNY, f, PXNY, toDirection]))
-          candidates.push(p([fromDirection, d, NXPY, toDirection]))
+          candidates.push(p([fromPoint, PXNY, f, PXNY, toPoint]))
+          candidates.push(p([fromPoint, d, NXPY, toPoint]))
         }
 
         // bottom -> top
@@ -205,8 +205,8 @@ export const getShortestPathRaw = (
           fromDirection === Direction.BOTTOM &&
           (toDirection === Direction.TOP || toDirection === Direction.LEFT)
         ) {
-          candidates.push(p([fromDirection, g, f, NXPY, toDirection]))
-          candidates.push(p([fromDirection, PXNY, d, PXNY, toDirection]))
+          candidates.push(p([fromPoint, g, f, NXPY, toPoint]))
+          candidates.push(p([fromPoint, PXNY, d, PXNY, toPoint]))
         }
 
         // right -> top
@@ -215,8 +215,8 @@ export const getShortestPathRaw = (
           fromDirection === Direction.RIGHT &&
           (toDirection === Direction.TOP || toDirection === Direction.LEFT)
         ) {
-          candidates.push(p([fromDirection, PXNY, e, NXPY, toDirection]))
-          candidates.push(p([fromDirection, PXNY, d, PXNY, toDirection]))
+          candidates.push(p([fromPoint, PXNY, e, NXPY, toPoint]))
+          candidates.push(p([fromPoint, PXNY, d, PXNY, toPoint]))
         }
         return minPaths(candidates)
       }
@@ -244,8 +244,8 @@ export const getShortestPathRaw = (
           fromDirection === Direction.TOP &&
           (toDirection === Direction.BOTTOM || toDirection === Direction.LEFT)
         ) {
-          candidates.push(p([fromDirection, NXPY, g, NXPY, toDirection]))
-          candidates.push(p([fromDirection, NXPY, d, PXNY, toDirection]))
+          candidates.push(p([fromPoint, NXPY, g, NXPY, toPoint]))
+          candidates.push(p([fromPoint, NXPY, d, PXNY, toPoint]))
         }
 
         // right -> bottom
@@ -254,8 +254,8 @@ export const getShortestPathRaw = (
           fromDirection === Direction.RIGHT &&
           (toDirection === Direction.BOTTOM || toDirection === Direction.LEFT)
         ) {
-          candidates.push(p([fromDirection, NXPY, g, NXPY, toDirection]))
-          candidates.push(p([fromDirection, b, NXPY, d, PXNY, toDirection]))
+          candidates.push(p([fromPoint, NXPY, g, NXPY, toPoint]))
+          candidates.push(p([fromPoint, b, NXPY, d, PXNY, toPoint]))
         }
 
         // bottom -> top
@@ -264,8 +264,8 @@ export const getShortestPathRaw = (
           fromDirection === Direction.BOTTOM &&
           (toDirection === Direction.TOP || toDirection === Direction.RIGHT)
         ) {
-          candidates.push(p([fromDirection, NXPY, f, PXNY, toDirection]))
-          candidates.push(p([fromDirection, NXPY, a, NXPY, toDirection]))
+          candidates.push(p([fromPoint, NXPY, f, PXNY, toPoint]))
+          candidates.push(p([fromPoint, NXPY, a, NXPY, toPoint]))
         }
 
         // left -> top
@@ -274,8 +274,8 @@ export const getShortestPathRaw = (
           fromDirection === Direction.LEFT &&
           (toDirection === Direction.TOP || toDirection === Direction.RIGHT)
         ) {
-          candidates.push(p([fromDirection, NXPY, a, NXPY, toDirection]))
-          candidates.push(p([fromDirection, PXNY, g, PXNY, toDirection]))
+          candidates.push(p([fromPoint, NXPY, a, NXPY, toPoint]))
+          candidates.push(p([fromPoint, PXNY, g, PXNY, toPoint]))
         }
 
         return minPaths(candidates)
@@ -303,8 +303,8 @@ export const getShortestPathRaw = (
           fromDirection === Direction.TOP &&
           (toDirection === Direction.BOTTOM || toDirection === Direction.RIGHT)
         ) {
-          candidates.push(p([fromDirection, NXPY, g, PXNY, toDirection]))
-          candidates.push(p([fromDirection, NXPY, d, NXPY, toDirection]))
+          candidates.push(p([fromPoint, NXPY, g, PXNY, toPoint]))
+          candidates.push(p([fromPoint, NXPY, d, NXPY, toPoint]))
         }
 
         // left -> bottom
@@ -313,8 +313,8 @@ export const getShortestPathRaw = (
           fromDirection === Direction.LEFT &&
           (toDirection === Direction.BOTTOM || toDirection === Direction.RIGHT)
         ) {
-          candidates.push(p([fromDirection, e, f, PXNY, toDirection]))
-          candidates.push(p([fromDirection, NXPY, d, NXPY, toDirection]))
+          candidates.push(p([fromPoint, e, f, PXNY, toPoint]))
+          candidates.push(p([fromPoint, NXPY, d, NXPY, toPoint]))
         }
 
         // bottom -> top
@@ -323,8 +323,8 @@ export const getShortestPathRaw = (
           fromDirection === Direction.BOTTOM &&
           (toDirection === Direction.TOP || toDirection === Direction.LEFT)
         ) {
-          candidates.push(p([fromDirection, d, a, PXNY, toDirection]))
-          candidates.push(p([fromDirection, NXPY, f, NXPY, toDirection]))
+          candidates.push(p([fromPoint, d, a, PXNY, toPoint]))
+          candidates.push(p([fromPoint, NXPY, f, NXPY, toPoint]))
         }
 
         // right -> top
@@ -333,8 +333,8 @@ export const getShortestPathRaw = (
           fromDirection === Direction.RIGHT &&
           (toDirection === Direction.TOP || toDirection === Direction.LEFT)
         ) {
-          candidates.push(p([fromDirection, c, d, PXNY, toDirection]))
-          candidates.push(p([fromDirection, NXPY, f, NXPY, toDirection]))
+          candidates.push(p([fromPoint, c, d, PXNY, toPoint]))
+          candidates.push(p([fromPoint, NXPY, f, NXPY, toPoint]))
         }
         return minPaths(candidates)
       }
@@ -343,11 +343,37 @@ export const getShortestPathRaw = (
 }
 
 const minPaths = (candidates: Path[]): Path => {
-  return []
+  let minIndex = 0
+  let currentMin = -1
+  candidates.forEach((path, i) => {
+    let cost = 0
+    for (let j = 1; j < path.length; j++) {
+      const curr = path[j]
+      const prev = path[j - 1]
+      cost += (Math.abs(prev.x - curr.x) + Math.abs(prev.y - curr.y))
+    }
+    if (currentMin < 0 || cost < currentMin) {
+      minIndex = i
+      currentMin = cost
+    }
+  })
+  return candidates[minIndex]
 }
 
 const processPath = (path: Path): Path => {
-  // TODO
+  path.forEach((point: any, i) => {
+    if (point === PXNY) {
+      path[i] = {
+        x: path[i - 1].x,
+        y: path[i + 1].y,
+      }
+    } else if (point === NXPY) {
+      path[i] = {
+        x: path[i + 1].x,
+        y: path[i - 1].y,
+      }
+    }
+  })
   return path
 }
 
@@ -361,3 +387,21 @@ const getRectPoints = (rect: IRectangle): IPoint[] => {
   const d = { x: x1, y: y1 + h1 }
   return [a, b, c, d]
 }
+
+const ret = getShortestPath(
+  { left: 0, top: 0, width: 10, height: 10 },
+  { x: 5, y: 10 },
+  // { left: 10, top: 10, width: 100, height: 100 },
+  // { x: 10, y: 20 },
+  // { x: 50, y: 10 },
+  Direction.BOTTOM,
+
+  { left: 8, top: 8, width: 10, height: 10 },
+  { x: 17, y: 8 },
+  // { x: 12, y: 15 },
+  // { left: 130, top: 130, width: 50, height: 100 },
+  // { x: 140, y: 230 },
+  // { x: 180, y: 180 },
+  Direction.TOP,
+)
+console.log(ret)
