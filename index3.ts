@@ -34,7 +34,7 @@ const isTopBottom = (d: Direction): boolean => TOP_BOTTOM.includes(d)
 const PXNY = "PXNY"
 const NXPY = "NXPY"
 
-export const getShortestPath = (
+export const getShortestPathRaw = (
   fromRect: IRectangle,
   fromPoint: IPoint,
   fromDirection: Direction,
@@ -81,28 +81,28 @@ export const getShortestPath = (
     (isTopDown && isTopRight(fromDirection) && isTopRight(toDirection))
   ) {
     const mid = isFromPointOnLeft ? NXPY : PXNY
-    return [fromPoint, mid, toPoint]
+    return p([fromPoint, mid, toPoint])
   }
 
   if (
     (isTopDown && isBottomLeft(fromDirection) && isBottomLeft(toDirection))
   ) {
     const mid = isFromPointOnLeft ? PXNY : NXPY
-    return [fromPoint, mid, toPoint]
+    return p([fromPoint, mid, toPoint])
   }
 
   if (
     (!isTopDown && isTopLeft(fromDirection) && isTopLeft(toDirection))
   ) {
     const mid = isFromPointOnLeft ? PXNY : NXPY
-    return [fromPoint, mid, toPoint]
+    return p([fromPoint, mid, toPoint])
   }
 
   if (
     (!isTopDown && isBottomRight(fromDirection) && isBottomRight(toDirection))
   ) {
     const mid = isFromPointOnLeft ? NXPY : PXNY
-    return [fromPoint, mid, toPoint]
+    return p([fromPoint, mid, toPoint])
   }
 
   /** ===================== 需要经过水平的中线的情况 ================================ */
@@ -112,12 +112,12 @@ export const getShortestPath = (
     (!isFromPointOnLeft && isBottomLeft(toDirection) && isTopRight(fromDirection))
   ) {
     if (hasHorizentalGap) {
-      return [fromPoint, PXNY, centerCrossPoint, NXPY, toPoint]
+      return p([fromPoint, PXNY, centerCrossPoint, NXPY, toPoint])
     } else {
       if (hasVerticalGap)  {
         const inf1: IPoint = isFromPointOnLeft ? c : e
         const inf2: IPoint = isFromPointOnLeft ? e : c
-        return [fromPoint, PXNY, inf1, NXPY, centerCrossPoint, PXNY, inf2, NXPY, toPoint]
+        return p([fromPoint, PXNY, inf1, NXPY, centerCrossPoint, PXNY, inf2, NXPY, toPoint])
       } else {
         const candidates = []
         // left -> top
@@ -126,8 +126,8 @@ export const getShortestPath = (
           fromDirection === Direction.LEFT &&
           (toDirection === Direction.TOP || toDirection === Direction.RIGHT)
         ) {
-          candidates.push([fromDirection, a, NXPY, toDirection])
-          candidates.push([fromDirection, PXNY, g, PXNY, toDirection])
+          candidates.push(p([fromDirection, a, NXPY, toDirection]))
+          candidates.push(p([fromDirection, PXNY, g, PXNY, toDirection]))
         }
 
         // bottom -> top
@@ -136,8 +136,8 @@ export const getShortestPath = (
           fromDirection === Direction.BOTTOM &&
           (toDirection === Direction.TOP || toDirection === Direction.RIGHT)
         ) {
-          candidates.push([fromDirection, d, a, NXPY, toDirection])
-          candidates.push([fromDirection, PXNY, g, PXNY, toDirection])
+          candidates.push(p([fromDirection, d, a, NXPY, toDirection]))
+          candidates.push(p([fromDirection, PXNY, g, PXNY, toDirection]))
         }
 
         // top -> left
@@ -146,8 +146,8 @@ export const getShortestPath = (
           fromDirection === Direction.TOP &&
           (toDirection === Direction.LEFT || toDirection === Direction.BOTTOM)
         ) {
-          candidates.push([fromDirection, NXPY, a, PXNY, toDirection])
-          candidates.push([fromDirection, f, g, NXPY, toDirection])
+          candidates.push(p([fromDirection, NXPY, a, PXNY, toDirection]))
+          candidates.push(p([fromDirection, f, g, NXPY, toDirection]))
         }
 
         // right -> left
@@ -156,8 +156,8 @@ export const getShortestPath = (
           fromDirection === Direction.RIGHT &&
           (toDirection === Direction.LEFT || toDirection === Direction.BOTTOM)
         ) {
-          candidates.push([fromDirection, g, NXPY, toDirection])
-          candidates.push([fromDirection, NXPY, b, a, PXNY, toDirection])
+          candidates.push(p([fromDirection, g, NXPY, toDirection]))
+          candidates.push(p([fromDirection, NXPY, b, a, PXNY, toDirection]))
         }
 
         return minPaths(candidates)
@@ -171,12 +171,12 @@ export const getShortestPath = (
     (!isFromPointOnLeft && isTopLeft(toDirection) && isBottomRight(fromDirection))
   ) {
     if (hasHorizentalGap) {
-      return [fromPoint, PXNY, centerCrossPoint, NXPY, toPoint]
+      return p([fromPoint, PXNY, centerCrossPoint, NXPY, toPoint])
     } else {
       if (hasVerticalGap)  {
         const inf1: IPoint = isFromPointOnLeft ? b : h
         const inf2: IPoint = isFromPointOnLeft ? h : b
-        return [fromPoint, PXNY, inf1, NXPY, centerCrossPoint, PXNY, inf2, NXPY, toPoint]
+        return p([fromPoint, PXNY, inf1, NXPY, centerCrossPoint, PXNY, inf2, NXPY, toPoint])
       } else {
         const candidates = []
         // top -> bottom
@@ -185,8 +185,8 @@ export const getShortestPath = (
           fromDirection === Direction.TOP &&
           (toDirection === Direction.BOTTOM || toDirection === Direction.RIGHT)
         ) {
-          candidates.push([fromDirection, PXNY, e, f, PXNY, toDirection])
-          candidates.push([fromDirection, a, b, NXPY, toDirection])
+          candidates.push(p([fromDirection, PXNY, e, f, PXNY, toDirection]))
+          candidates.push(p([fromDirection, a, b, NXPY, toDirection]))
         }
 
         // left -> bottom
@@ -195,8 +195,8 @@ export const getShortestPath = (
           fromDirection === Direction.LEFT &&
           (toDirection === Direction.BOTTOM || toDirection === Direction.RIGHT)
         ) {
-          candidates.push([fromDirection, PXNY, e, f, PXNY, toDirection])
-          candidates.push([fromDirection, d, c, NXPY, toDirection])
+          candidates.push(p([fromDirection, PXNY, e, f, PXNY, toDirection]))
+          candidates.push(p([fromDirection, d, c, NXPY, toDirection]))
         }
 
         // bottom -> top
@@ -205,8 +205,8 @@ export const getShortestPath = (
           fromDirection === Direction.BOTTOM &&
           (toDirection === Direction.TOP || toDirection === Direction.LEFT)
         ) {
-          candidates.push([fromDirection, g, f, NXPY, toDirection])
-          candidates.push([fromDirection, PXNY, d, PXNY, toDirection])
+          candidates.push(p([fromDirection, g, f, NXPY, toDirection]))
+          candidates.push(p([fromDirection, PXNY, d, PXNY, toDirection]))
         }
 
         // right -> top
@@ -215,8 +215,8 @@ export const getShortestPath = (
           fromDirection === Direction.RIGHT &&
           (toDirection === Direction.TOP || toDirection === Direction.LEFT)
         ) {
-          candidates.push([fromDirection, PXNY, e, NXPY, toDirection])
-          candidates.push([fromDirection, PXNY, d, PXNY, toDirection])
+          candidates.push(p([fromDirection, PXNY, e, NXPY, toDirection]))
+          candidates.push(p([fromDirection, PXNY, d, PXNY, toDirection]))
         }
         return minPaths(candidates)
       }
@@ -235,7 +235,7 @@ export const getShortestPath = (
       if (hasHorizentalGap)  {
         const inf1 = isFromPointOnTop ? c : e
         const inf2 = isFromPointOnTop ? e : c
-        return [fromPoint, NXPY, inf1, PXNY, centerCrossPoint, NXPY, inf2, PXNY, toPoint]
+        return p([fromPoint, NXPY, inf1, PXNY, centerCrossPoint, NXPY, inf2, PXNY, toPoint])
       } else {
         const candidates = []
         // top -> bottom
@@ -244,8 +244,8 @@ export const getShortestPath = (
           fromDirection === Direction.TOP &&
           (toDirection === Direction.BOTTOM || toDirection === Direction.LEFT)
         ) {
-          candidates.push([fromDirection, NXPY, g, NXPY, toDirection])
-          candidates.push([fromDirection, NXPY, d, PXNY, toDirection])
+          candidates.push(p([fromDirection, NXPY, g, NXPY, toDirection]))
+          candidates.push(p([fromDirection, NXPY, d, PXNY, toDirection]))
         }
 
         // right -> bottom
@@ -254,8 +254,8 @@ export const getShortestPath = (
           fromDirection === Direction.RIGHT &&
           (toDirection === Direction.BOTTOM || toDirection === Direction.LEFT)
         ) {
-          candidates.push([fromDirection, NXPY, g, NXPY, toDirection])
-          candidates.push([fromDirection, b, NXPY, d, PXNY, toDirection])
+          candidates.push(p([fromDirection, NXPY, g, NXPY, toDirection]))
+          candidates.push(p([fromDirection, b, NXPY, d, PXNY, toDirection]))
         }
 
         // bottom -> top
@@ -264,8 +264,8 @@ export const getShortestPath = (
           fromDirection === Direction.BOTTOM &&
           (toDirection === Direction.TOP || toDirection === Direction.RIGHT)
         ) {
-          candidates.push([fromDirection, NXPY, f, PXNY, toDirection])
-          candidates.push([fromDirection, NXPY, a, NXPY, toDirection])
+          candidates.push(p([fromDirection, NXPY, f, PXNY, toDirection]))
+          candidates.push(p([fromDirection, NXPY, a, NXPY, toDirection]))
         }
 
         // left -> top
@@ -274,8 +274,8 @@ export const getShortestPath = (
           fromDirection === Direction.LEFT &&
           (toDirection === Direction.TOP || toDirection === Direction.RIGHT)
         ) {
-          candidates.push([fromDirection, NXPY, a, NXPY, toDirection])
-          candidates.push([fromDirection, PXNY, g, PXNY, toDirection])
+          candidates.push(p([fromDirection, NXPY, a, NXPY, toDirection]))
+          candidates.push(p([fromDirection, PXNY, g, PXNY, toDirection]))
         }
 
         return minPaths(candidates)
@@ -289,12 +289,12 @@ export const getShortestPath = (
     (!isFromPointOnTop && isTopLeft(toDirection) && isBottomRight(fromDirection))
   ) {
     if (hasVerticalGap) {
-      return [fromPoint, NXPY, centerCrossPoint, PXNY, toPoint]
+      return p([fromPoint, NXPY, centerCrossPoint, PXNY, toPoint])
     } else {
       if (hasHorizentalGap)  {
         const inf1 = isFromPointOnTop ? h : b
         const inf2 = isFromPointOnTop ? b : h
-        return [fromPoint, NXPY, inf1, PXNY, centerCrossPoint, NXPY, inf2, PXNY, toPoint]
+        return p([fromPoint, NXPY, inf1, PXNY, centerCrossPoint, NXPY, inf2, PXNY, toPoint])
       } else {
         const candidates = []
         // top -> bottom
@@ -303,8 +303,8 @@ export const getShortestPath = (
           fromDirection === Direction.TOP &&
           (toDirection === Direction.BOTTOM || toDirection === Direction.RIGHT)
         ) {
-          candidates.push([fromDirection, NXPY, g, PXNY, toDirection])
-          candidates.push([fromDirection, NXPY, d, NXPY, toDirection])
+          candidates.push(p([fromDirection, NXPY, g, PXNY, toDirection]))
+          candidates.push(p([fromDirection, NXPY, d, NXPY, toDirection]))
         }
 
         // left -> bottom
@@ -313,8 +313,8 @@ export const getShortestPath = (
           fromDirection === Direction.LEFT &&
           (toDirection === Direction.BOTTOM || toDirection === Direction.RIGHT)
         ) {
-          candidates.push([fromDirection, e, f, PXNY, toDirection])
-          candidates.push([fromDirection, NXPY, d, NXPY, toDirection])
+          candidates.push(p([fromDirection, e, f, PXNY, toDirection]))
+          candidates.push(p([fromDirection, NXPY, d, NXPY, toDirection]))
         }
 
         // bottom -> top
@@ -323,8 +323,8 @@ export const getShortestPath = (
           fromDirection === Direction.BOTTOM &&
           (toDirection === Direction.TOP || toDirection === Direction.LEFT)
         ) {
-          candidates.push([fromDirection, d, a, PXNY, toDirection])
-          candidates.push([fromDirection, NXPY, f, NXPY, toDirection])
+          candidates.push(p([fromDirection, d, a, PXNY, toDirection]))
+          candidates.push(p([fromDirection, NXPY, f, NXPY, toDirection]))
         }
 
         // right -> top
@@ -333,8 +333,8 @@ export const getShortestPath = (
           fromDirection === Direction.RIGHT &&
           (toDirection === Direction.TOP || toDirection === Direction.LEFT)
         ) {
-          candidates.push([fromDirection, c, d, PXNY, toDirection])
-          candidates.push([fromDirection, NXPY, f, NXPY, toDirection])
+          candidates.push(p([fromDirection, c, d, PXNY, toDirection]))
+          candidates.push(p([fromDirection, NXPY, f, NXPY, toDirection]))
         }
         return minPaths(candidates)
       }
@@ -345,6 +345,13 @@ export const getShortestPath = (
 const minPaths = (candidates: Path[]): Path => {
   return []
 }
+
+const processPath = (path: Path): Path => {
+  // TODO
+  return path
+}
+
+const p = processPath
 
 const getRectPoints = (rect: IRectangle): IPoint[] => {
   const { left: x1, top: y1, width: w1, height: h1 } = rect
