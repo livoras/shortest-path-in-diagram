@@ -195,8 +195,8 @@ export const getShortestPathRaw = (
           fromDirection === Direction.LEFT &&
           (toDirection === Direction.BOTTOM || toDirection === Direction.RIGHT)
         ) {
-          candidates.push(p([fromDirection, PXNY, e, f, PXNY, toDirection]))
-          candidates.push(p([fromDirection, d, c, NXPY, toDirection]))
+          candidates.push(p([fromDirection, PXNY, f, PXNY, toDirection]))
+          candidates.push(p([fromDirection, d, NXPY, toDirection]))
         }
 
         // bottom -> top
