@@ -49,8 +49,8 @@ export const getShortestPath = (
   const [a, b, c, d] = getRectPoints(leftRect)
   const [e, f, g, h] = getRectPoints(rightRect)
 
-  const topPoint = isTopDown ? a : f
-  const bottomPoint = isTopDown ? g : d
+  // const topPoint = isTopDown ? a : f
+  // const bottomPoint = isTopDown ? g : d
   const centerLeftPoint = isTopDown ? c : b
   const centerRightPoint = isTopDown ? e : h
 
@@ -73,37 +73,37 @@ export const getShortestPath = (
   }
   hasVerticalGap = (leftRect.left + leftRect.width) < rightRect.left
 
+  const isFromPointOnLeft = fromPoint.x < toPoint.x
+  const isFromPointOnTop = fromPoint.y < toPoint.y
+
   /** 所有情况都适用的两端 */
   if (
     (isTopDown && isTopRight(fromDirection) && isTopRight(toDirection))
   ) {
-    const mid = fromPoint.x < toPoint.x ? NXPY : PXNY
+    const mid = isFromPointOnLeft ? NXPY : PXNY
     return [fromPoint, mid, toPoint]
   }
 
   if (
     (isTopDown && isBottomLeft(fromDirection) && isBottomLeft(toDirection))
   ) {
-    const mid = fromPoint.x < toPoint.x ? PXNY : NXPY
+    const mid = isFromPointOnLeft ? PXNY : NXPY
     return [fromPoint, mid, toPoint]
   }
 
   if (
     (!isTopDown && isTopLeft(fromDirection) && isTopLeft(toDirection))
   ) {
-    const mid = fromPoint.x < toPoint.x ? PXNY : NXPY
+    const mid = isFromPointOnLeft ? PXNY : NXPY
     return [fromPoint, mid, toPoint]
   }
 
   if (
     (!isTopDown && isBottomRight(fromDirection) && isBottomRight(toDirection))
   ) {
-    const mid = fromPoint.x < toPoint.x ? NXPY : PXNY
+    const mid = isFromPointOnLeft ? NXPY : PXNY
     return [fromPoint, mid, toPoint]
   }
-
-  const isFromPointOnLeft = fromPoint.x < toPoint.x
-  const isFromPointOnTop = fromPoint.y < toPoint.y
 
   /** ===================== 需要经过水平的中线的情况 ================================ */
   if (
