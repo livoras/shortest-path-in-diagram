@@ -226,7 +226,7 @@ const getGapCenterOfTwoRects = (rect1: IRectangle, rect2: IRectangle): IPoint =>
 
 const getCenterPointOfSegment = (x1: number, x2: number, x3: number, x4: number): number => {
   const points = [x1, x2, x3, x4].sort((a, b) => a - b)
-  return points[2] + (points[3] - points[2]) / 2
+  return points[1] + (points[2] - points[1]) / 2
 }
 
 const minPaths = (candidates: Path[]): Path => {
@@ -321,3 +321,5 @@ const ret = getShortestPath(
   // { x: 180, y: 180 },
   Direction.TOP,
 )
+
+console.log(ret)
