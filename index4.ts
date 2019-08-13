@@ -289,13 +289,14 @@ const isPointInRect = (point: IPoint, rect: IRectangle): boolean => {
 
 /** 判断横竖线是否相交 */
 const isRegularLineIntersected = (l1: ILine, l2: ILine): boolean => {
-  return isRegularSegmentIntersected(l1.from.x, l1.to.x, l2.from.x, l2.from.x) &&
-    isRegularSegmentIntersected(l1.from.y, l1.to.y, l2.from.y, l2.from.y)
+  const ret1 = isRegularSegmentIntersected(l1.from.x, l1.to.x, l2.from.x, l2.to.x)
+  const ret2 = isRegularSegmentIntersected(l1.from.y, l1.to.y, l2.from.y, l2.to.y)
+  return ret1 && ret2
 }
 
 /** 判断分量是否相交 */
 const isRegularSegmentIntersected = (a: number, b: number, c: number, d: number): boolean => {
-  return isNumberBetween(a, c, d) || isNumberBetween(b, c, d)
+  return isNumberBetween(a, c, d) || isNumberBetween(b, c, d) || isNumberBetween(c, a, b) || isNumberBetween(d, a, b)
 }
 
 /**
@@ -305,13 +306,30 @@ const isNumberBetween = (x, num1, num2): boolean => {
   return (x - num1) * (x - num2) < 0
 }
 
+// const ret = getShortestPath(
+//   { left: 0, top: 0, width: 10, height: 10 },
+//   { x: 5, y: 10 },
+//   // { left: 10, top: 10, width: 100, height: 100 },
+//   // { x: 10, y: 20 },
+//   // { x: 50, y: 10 },
+//   Direction.BOTTOM,
+
+//   { left: 12, top: 12, width: 10, height: 10 },
+//   { x: 18, y: 12 },
+//   // { x: 12, y: 15 },
+//   // { left: 130, top: 130, width: 50, height: 100 },
+//   // { x: 140, y: 230 },
+//   // { x: 180, y: 180 },
+//   Direction.TOP,
+// )
+
 const ret = getShortestPath(
   { left: 0, top: 0, width: 10, height: 10 },
-  { x: 5, y: 10 },
+  { x: 0, y: 2 },
   // { left: 10, top: 10, width: 100, height: 100 },
   // { x: 10, y: 20 },
   // { x: 50, y: 10 },
-  Direction.BOTTOM,
+  Direction.LEFT,
 
   { left: 12, top: 12, width: 10, height: 10 },
   { x: 18, y: 12 },
