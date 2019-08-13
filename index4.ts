@@ -22,7 +22,7 @@ const enum Direction {
   LEFT = "LEFT",
 }
 
-type Path = any[]
+type Path = IPoint[]
 
 const TOP_RIGHT = [Direction.TOP, Direction.RIGHT]
 const BOTTOM_LEFT = [Direction.BOTTOM, Direction.LEFT]
@@ -73,7 +73,57 @@ const getPathByCenterStrategy = (
   toPoint: IPoint,
   toDirection: Direction,
 ): Path | null => {
-  return null
+
+  /** 中心点 */
+  const gapCenter = getGapCenterOfTwoRects(fromRect, toRect)
+
+  /** 水平情况 Path */
+  const horizontalCenterPath = [
+    fromPoint,
+    { x: gapCenter.x, y: fromPoint.y },
+    gapCenter,
+    { x: gapCenter.x, y: toPoint.y },
+    toPoint,
+  ]
+
+  /** 垂直情况 Path */
+  const verticalCenterPath = [
+    fromPoint,
+    { x: fromPoint.x, y: gapCenter.y },
+    gapCenter,
+    { x: toPoint.x, y: gapCenter.y },
+    toPoint,
+  ]
+
+  /** 看是否和矩形相交 */
+  const validPaths = getValidPathsByRects([horizontalCenterPath, verticalCenterPath], fromRect, toRect)
+
+  /** 如果没有合法路径 */
+  if (validPaths.length === 0) {
+    return null
+  /** 如果只有一条直接返回 */
+  } else if (validPaths.length === 1) {
+    return validPaths[0]
+  /** 如果有两条合法路径，看方向 */
+  } else {
+    if (fromDirection === Direction.LEFT || fromDirection === Direction.RIGHT) {
+      return validPaths[0]
+    } else {
+      return validPaths[1]
+    }
+  }
+
+  // let fromPaths = getSingleInflectionLinkOfTwoPoints(fromPoint, gapCenter)
+  // fromPaths = getValidPathsByRects(fromPaths, fromRect, toRect)
+  // if (fromPaths.length === 0) { return null }
+  // const fromPath = chooseSILPathsByDirection(fromPaths, fromDirection)
+
+  // let toPaths = getSingleInflectionLinkOfTwoPoints(gapCenter, toPoint)
+  // toPaths = getValidPathsByRects(toPaths, fromRect, toRect)
+  // if (toPaths.length === 0) { return null }
+  // const toPath = chooseSILPathsByDirection(toPaths, fromDirection)
+
+  // return [...fromPath, ...toPath]
 }
 
 const getPathBySingleInflectionStrategy = (
@@ -110,6 +160,54 @@ const getPathByMovingPointStrategy = (
   toDirection: Direction,
 ): Path => {
   return null
+}
+
+const chooseSILPathsByDirection = (paths: Path[], direction: Direction): Path => {
+  if (paths.length === 1) { return paths[0] }
+  if (direction === Direction.LEFT || direction === Direction.RIGHT) {
+    return paths[0]
+  }  else {
+    return paths[1]
+  }
+}
+
+const getValidPathsByRects = (paths: Path[], rect1: IRectangle, rect2: IRectangle): Path[] => {
+  return paths.filter((path) =>
+    !isRegularPathIntersectedWithRect(path, rect1) &&
+    !isRegularPathIntersectedWithRect(path, rect2),
+  )
+}
+
+/** 获取两个点的两条 SIL */
+const getSingleInflectionLinkOfTwoPoints = (p1: IPoint, p2: IPoint): Path[] => {
+  return [
+    [p1, { x: p2.x, y: p1.y }, p2], // 水平
+    [p1, { x: p1.x, y: p2.y }, p2], // 垂直
+  ]
+}
+
+/** 获取两个矩形的中心点 */
+const getGapCenterOfTwoRects = (rect1: IRectangle, rect2: IRectangle): IPoint => {
+  return {
+    x: getCenterPointOfSegment(
+      rect1.left,
+      rect1.left + rect1.width,
+      rect2.left,
+      rect2.left + rect2.width,
+    ),
+
+    y: getCenterPointOfSegment(
+      rect1.top,
+      rect1.top + rect1.height,
+      rect2.top,
+      rect2.top + rect2.height,
+    ),
+  }
+}
+
+const getCenterPointOfSegment = (x1: number, x2: number, x3: number, x4: number): number => {
+  const points = [x1, x2, x3, x4].sort((a, b) => a - b)
+  return points[2] + (points[3] - points[2]) / 2
 }
 
 const minPaths = (candidates: Path[]): Path => {
@@ -158,22 +256,15 @@ const getRectPoints = (rect: IRectangle): IPoint[] => {
   return [a, b, c, d]
 }
 
-const ret = getShortestPath(
-  { left: 0, top: 0, width: 10, height: 10 },
-  { x: 5, y: 10 },
-  // { left: 10, top: 10, width: 100, height: 100 },
-  // { x: 10, y: 20 },
-  // { x: 50, y: 10 },
-  Direction.BOTTOM,
-
-  { left: 12, top: 12, width: 10, height: 10 },
-  { x: 18, y: 12 },
-  // { x: 12, y: 15 },
-  // { left: 130, top: 130, width: 50, height: 100 },
-  // { x: 140, y: 230 },
-  // { x: 180, y: 180 },
-  Direction.TOP,
-)
+/** 判断路径是否和矩形相交 */
+const isRegularPathIntersectedWithRect = (path: Path, rect: IRectangle): boolean => {
+  for (let i = 0, len = path.length - 1; i < len; i++) {
+    if (isRegularLineIntersectedWithRect({ from: path[i], to: path[i + 1] }, rect)) {
+      return true
+    }
+  }
+  return false
+}
 
 /**
  * 判断横竖线段和矩形是否相交
@@ -213,3 +304,20 @@ const isRegularSegmentIntersected = (a: number, b: number, c: number, d: number)
 const isNumberBetween = (x, num1, num2): boolean => {
   return (x - num1) * (x - num2) < 0
 }
+
+const ret = getShortestPath(
+  { left: 0, top: 0, width: 10, height: 10 },
+  { x: 5, y: 10 },
+  // { left: 10, top: 10, width: 100, height: 100 },
+  // { x: 10, y: 20 },
+  // { x: 50, y: 10 },
+  Direction.BOTTOM,
+
+  { left: 12, top: 12, width: 10, height: 10 },
+  { x: 18, y: 12 },
+  // { x: 12, y: 15 },
+  // { left: 130, top: 130, width: 50, height: 100 },
+  // { x: 140, y: 230 },
+  // { x: 180, y: 180 },
+  Direction.TOP,
+)
