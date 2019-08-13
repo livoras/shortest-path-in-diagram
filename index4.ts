@@ -24,21 +24,15 @@ const enum Direction {
 
 type Path = IPoint[]
 
-const TOP_RIGHT = [Direction.TOP, Direction.RIGHT]
-const BOTTOM_LEFT = [Direction.BOTTOM, Direction.LEFT]
-const TOP_LEFT = [Direction.TOP, Direction.LEFT]
-const BOTTOM_RIGHT = [Direction.TOP, Direction.RIGHT]
-const TOP_BOTTOM = [Direction.TOP, Direction.BOTTOM]
-
-const isTopRight = (d: Direction): boolean => TOP_RIGHT.includes(d)
-const isBottomLeft = (d: Direction): boolean => BOTTOM_LEFT.includes(d)
-const isTopLeft = (d: Direction): boolean => TOP_LEFT.includes(d)
-const isBottomRight = (d: Direction): boolean => BOTTOM_RIGHT.includes(d)
-const isTopBottom = (d: Direction): boolean => TOP_BOTTOM.includes(d)
-
-const PXNY = "PXNY"
-const NXPY = "NXPY"
-
+/**
+ * 折线算法！
+ * @param fromRect
+ * @param fromPoint
+ * @param fromDirection
+ * @param toRect
+ * @param toPoint
+ * @param toDirection
+ */
 export const getShortestPath = (
   fromRect: IRectangle,
   fromPoint: IPoint,
@@ -57,6 +51,7 @@ export const getShortestPath = (
   return getPathByMovingPointStrategy(...args) || getPathBySingleInflectionForcelyStrategy(...args)
 }
 
+/** 判断是否两个方向完全  */
 const isInverseDirection = (direction1: Direction, direction2: Direction): boolean => {
   return (direction1 === Direction.LEFT && direction2 === Direction.RIGHT) ||
     (direction1 === Direction.RIGHT && direction2 === Direction.LEFT) ||
@@ -64,6 +59,7 @@ const isInverseDirection = (direction1: Direction, direction2: Direction): boole
     (direction1 === Direction.BOTTOM && direction2 === Direction.TOP)
 }
 
+/** 中心点策略 */
 const getPathByCenterStrategy = (
   fromRect: IRectangle,
   fromPoint: IPoint,
@@ -112,20 +108,9 @@ const getPathByCenterStrategy = (
       return validPaths[1]
     }
   }
-
-  // let fromPaths = getSingleInflectionLinkOfTwoPoints(fromPoint, gapCenter)
-  // fromPaths = getValidPathsByRects(fromPaths, fromRect, toRect)
-  // if (fromPaths.length === 0) { return null }
-  // const fromPath = chooseSILPathsByDirection(fromPaths, fromDirection)
-
-  // let toPaths = getSingleInflectionLinkOfTwoPoints(gapCenter, toPoint)
-  // toPaths = getValidPathsByRects(toPaths, fromRect, toRect)
-  // if (toPaths.length === 0) { return null }
-  // const toPath = chooseSILPathsByDirection(toPaths, fromDirection)
-
-  // return [...fromPath, ...toPath]
 }
 
+/** SIL 策略 */
 const getPathBySingleInflectionStrategy = (
   fromRect: IRectangle,
   fromPoint: IPoint,
@@ -135,9 +120,17 @@ const getPathBySingleInflectionStrategy = (
   toPoint: IPoint,
   toDirection: Direction,
 ): Path | null => {
-  return null
+  const sils = getSingleInflectionLinkOfTwoPoints(fromPoint, toPoint)
+  const validPaths = getValidPathsByRects(sils, fromRect, toRect)
+  console.assert(validPaths.length <= 1, "单 SIL 模式，不应该返回多条合法路径")
+  if (validPaths.length === 0) {
+    return null
+  } else {
+    return validPaths[0]
+  }
 }
 
+/** 无视矩形 SIL */
 const getPathBySingleInflectionForcelyStrategy = (
   fromRect: IRectangle,
   fromPoint: IPoint,
@@ -147,9 +140,11 @@ const getPathBySingleInflectionForcelyStrategy = (
   toPoint: IPoint,
   toDirection: Direction,
 ): Path | null => {
-  return null
+  const sils = getSingleInflectionLinkOfTwoPoints(fromPoint, toPoint)
+  return minPaths(sils)
 }
 
+/** 平移以后单 SIL 策略 */
 const getPathByMovingPointStrategy = (
   fromRect: IRectangle,
   fromPoint: IPoint,
@@ -159,18 +154,42 @@ const getPathByMovingPointStrategy = (
   toPoint: IPoint,
   toDirection: Direction,
 ): Path => {
-  return null
+  const [f1, f2] = getMovingPoints(fromPoint, fromRect, fromDirection)
+  const [t1, t2] = getMovingPoints(toPoint, toRect, toDirection)
+  const headFrom = (path: Path): Path => [fromPoint, ...path]
+  const tialTo = (path: Path): Path => [...path, toPoint]
+  const singlePath = (from: IPoint, to: IPoint): Path => {
+    return getValidPathsByRects(
+      getSingleInflectionLinkOfTwoPoints(from, to),
+      fromRect,
+      toRect,
+    )[0] || []
+  }
+  const paths = [
+    headFrom(singlePath(f1, toPoint)),
+    headFrom(singlePath(f2, toPoint)),
+    tialTo(singlePath(fromPoint, t1)),
+    tialTo(singlePath(fromPoint, t2)),
+  ].filter((p) => p.length > 1)
+  if (paths.length === 0) { return null }
+  return minPaths(paths)
 }
 
-const chooseSILPathsByDirection = (paths: Path[], direction: Direction): Path => {
-  if (paths.length === 1) { return paths[0] }
-  if (direction === Direction.LEFT || direction === Direction.RIGHT) {
-    return paths[0]
-  }  else {
-    return paths[1]
+/** 获取一个点的平移以后的方向 */
+const getMovingPoints = (point: IPoint, rect: IRectangle, direct: Direction): [IPoint, IPoint] => {
+  const [a, b, c, d] = getRectPoints(rect)
+  if (direct === Direction.TOP) {
+    return [a, b]
+  } else if (direct === Direction.RIGHT) {
+    return [b, c]
+  } else if (direct === Direction.BOTTOM) {
+    return [c, d]
+  } else {
+    return [d, a]
   }
 }
 
+/** 判断路径是否和矩形都不相交 */
 const getValidPathsByRects = (paths: Path[], rect1: IRectangle, rect2: IRectangle): Path[] => {
   return paths.filter((path) =>
     !isRegularPathIntersectedWithRect(path, rect1) &&
@@ -227,25 +246,6 @@ const minPaths = (candidates: Path[]): Path => {
   })
   return candidates[minIndex]
 }
-
-const processPath = (path: Path): Path => {
-  path.forEach((point: any, i) => {
-    if (point === PXNY) {
-      path[i] = {
-        x: path[i - 1].x,
-        y: path[i + 1].y,
-      }
-    } else if (point === NXPY) {
-      path[i] = {
-        x: path[i + 1].x,
-        y: path[i - 1].y,
-      }
-    }
-  })
-  return path
-}
-
-const p = processPath
 
 const getRectPoints = (rect: IRectangle): IPoint[] => {
   const { left: x1, top: y1, width: w1, height: h1 } = rect
