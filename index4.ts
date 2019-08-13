@@ -175,6 +175,27 @@ const ret = getShortestPath(
   Direction.TOP,
 )
 
+/**
+ * 判断横竖线段和矩形是否相交
+ */
+const isRegularLineIntersectedWithRect = (l: ILine, rect: IRectangle): boolean => {
+  if (isPointInRect(l.from, rect) || isPointInRect(l.to, rect)) {
+    return true
+  }
+  const [a, b, c, d] = getRectPoints(rect)
+  return isRegularLineIntersected(l, { from: a, to: b }) ||
+    isRegularLineIntersected(l, { from: b, to: c }) ||
+    isRegularLineIntersected(l, { from: c, to: d }) ||
+    isRegularLineIntersected(l, { from: d, to: a })
+}
+
+const isPointInRect = (point: IPoint, rect: IRectangle): boolean => {
+  return point.x > rect.left &&
+    point.y > rect.top &&
+    point.x < (rect.left + rect.width) &&
+    point.y < (rect.top + rect.height)
+}
+
 /** 判断横竖线是否相交 */
 const isRegularLineIntersected = (l1: ILine, l2: ILine): boolean => {
   return isRegularSegmentIntersected(l1.from.x, l1.to.x, l2.from.x, l2.from.x) &&
