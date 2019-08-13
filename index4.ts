@@ -323,6 +323,23 @@ const isNumberBetween = (x, num1, num2): boolean => {
 //   Direction.TOP,
 // )
 
+// const ret = getShortestPath(
+//   { left: 0, top: 0, width: 10, height: 10 },
+//   { x: 0, y: 2 },
+//   // { left: 10, top: 10, width: 100, height: 100 },
+//   // { x: 10, y: 20 },
+//   // { x: 50, y: 10 },
+//   Direction.LEFT,
+
+//   { left: 12, top: 12, width: 10, height: 10 },
+//   { x: 18, y: 12 },
+//   // { x: 12, y: 15 },
+//   // { left: 130, top: 130, width: 50, height: 100 },
+//   // { x: 140, y: 230 },
+//   // { x: 180, y: 180 },
+//   Direction.TOP,
+// )
+
 const ret = getShortestPath(
   { left: 0, top: 0, width: 10, height: 10 },
   { x: 0, y: 2 },
@@ -331,13 +348,13 @@ const ret = getShortestPath(
   // { x: 50, y: 10 },
   Direction.LEFT,
 
-  { left: 12, top: 12, width: 10, height: 10 },
-  { x: 18, y: 12 },
+  { left: 8, top: 8, width: 10, height: 10 },
+  { x: 18, y: 10 },
   // { x: 12, y: 15 },
   // { left: 130, top: 130, width: 50, height: 100 },
   // { x: 140, y: 230 },
   // { x: 180, y: 180 },
-  Direction.TOP,
+  Direction.RIGHT,
 )
 
 console.log(ret)
