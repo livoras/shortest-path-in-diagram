@@ -349,7 +349,7 @@ const ret = getShortestPath(
   Direction.LEFT,
 
   { left: 8, top: 8, width: 10, height: 10 },
-  { x: 18, y: 10 },
+  { x: 18, y: 17 },
   // { x: 12, y: 15 },
   // { left: 130, top: 130, width: 50, height: 100 },
   // { x: 140, y: 230 },
