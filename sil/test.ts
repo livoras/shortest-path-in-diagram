@@ -79,7 +79,7 @@ describe("check shortest path", () => {
     )
   })
 
-  it("no gap sil left top down up, top -> left", () => {
+  it("gap sil left top down up, top -> left", () => {
     const ret = getShortestPathInDiagram(
       { left: 0, top: 12, width: 10, height: 10 },
       { x: 2, y: 12 },
@@ -98,7 +98,7 @@ describe("check shortest path", () => {
     )
   })
 
-  it("no gap sil left top down up, top -> rigth", () => {
+  it("gap sil left top down up, top -> rigth", () => {
     const ret = getShortestPathInDiagram(
       { left: 0, top: 12, width: 10, height: 10 },
       { x: 2, y: 12 },
@@ -117,7 +117,7 @@ describe("check shortest path", () => {
     )
   })
 
-  it("no gap sil left top down up, top -> bottom", () => {
+  it("gap sil left top down up, top -> bottom", () => {
     const ret = getShortestPathInDiagram(
       { left: 0, top: 12, width: 10, height: 10 },
       { x: 2, y: 12 },
