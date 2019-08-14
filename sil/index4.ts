@@ -380,13 +380,6 @@ const isRegularLineIntersectedWithRect = (l: ILine, rect: IRectangle): boolean =
   }
   const [c1, c2] = getRectCrossLines(rect)
   return isRegularLineIntersected(l, c1) || isRegularLineIntersected(l, c2)
-  // const [a, b, c, d] = getRectPoints(rect)
-  // const ret = isRegularLineIntersected(l, { from: a, to: b }) ||
-  //   isRegularLineIntersected(l, { from: b, to: c }) ||
-  //   isRegularLineIntersected(l, { from: c, to: d }) ||
-  //   isRegularLineIntersected(l, { from: d, to: a })
-  // console.log(l, "->", rect, ret)
-  // return ret
 }
 
 const isPointInRect = (point: IPoint, rect: IRectangle): boolean => {
@@ -414,54 +407,3 @@ const isRegularSegmentIntersected = (a: number, b: number, c: number, d: number)
 const isNumberBetween = (x: number, num1: number, num2: number): boolean => {
   return (x - num1) * (x - num2) < 0
 }
-
-// const ret = getShortestPath(
-//   { left: 0, top: 0, width: 10, height: 10 },
-//   { x: 5, y: 10 },
-//   // { left: 10, top: 10, width: 100, height: 100 },
-//   // { x: 10, y: 20 },
-//   // { x: 50, y: 10 },
-//   Direction.BOTTOM,
-
-//   { left: 12, top: 12, width: 10, height: 10 },
-//   { x: 18, y: 12 },
-//   // { x: 12, y: 15 },
-//   // { left: 130, top: 130, width: 50, height: 100 },
-//   // { x: 140, y: 230 },
-//   // { x: 180, y: 180 },
-//   Direction.TOP,
-// )
-
-// const ret = getShortestPath(
-//   { left: 0, top: 0, width: 10, height: 10 },
-//   { x: 0, y: 2 },
-//   // { left: 10, top: 10, width: 100, height: 100 },
-//   // { x: 10, y: 20 },
-//   // { x: 50, y: 10 },
-//   Direction.LEFT,
-
-//   { left: 12, top: 12, width: 10, height: 10 },
-//   { x: 18, y: 12 },
-//   // { x: 12, y: 15 },
-//   // { left: 130, top: 130, width: 50, height: 100 },
-//   // { x: 140, y: 230 },
-//   // { x: 180, y: 180 },
-//   Direction.TOP,
-// )
-
-// const ret = getShortestPathInDiagram(
-//   { left: 0, top: 0, width: 5, height: 5 },
-//   { x: 5, y: 0 },
-//   // { left: 10, top: 10, width: 100, height: 100 },
-//   // { x: 10, y: 20 },
-//   // { x: 50, y: 10 },
-//   Direction.TOP,
-
-//   { left: 8, top: 8, width: 10, height: 10 },
-//   { x: 10, y: 18 },
-//   // { x: 12, y: 15 },
-//   // { left: 130, top: 130, width: 50, height: 100 },
-//   // { x: 140, y: 230 },
-//   // { x: 180, y: 180 },
-//   Direction.BOTTOM,
-// )
