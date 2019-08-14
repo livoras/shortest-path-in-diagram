@@ -40,14 +40,16 @@ export const getShortestPathInDiagram = (
   const args: [IRectangle, IPoint, Direction, IRectangle, IPoint, Direction] =
     [fromRect, fromPoint, fromDirection, toRect, toPoint, toDirection]
   /** 强制策略 */
+  let path: Path
   if (isPointInRect(fromPoint, toRect) || isPointInRect(toPoint, fromRect)) {
-    return getPathBySingleInflectionForcelyStrategy(...args)
+    path = getPathBySingleInflectionForcelyStrategy(...args)
+  } else {
+    path = isInverseDirection(fromDirection, toDirection)
+      ? getPathByCenterStrategy(...args)
+      : getPathBySingleInflectionStrategy(...args)
   }
-  const path = isInverseDirection(fromDirection, toDirection)
-    ? getPathByCenterStrategy(...args)
-    : getPathBySingleInflectionStrategy(...args)
-  if (path) { return path }
-  return getPathByMovingPointStrategy(...args)
+  path = path || getPathByMovingPointStrategy(...args)
+  return simplifyPath(path)
 }
 
 /** 判断是否两个方向完全  */
@@ -309,9 +311,27 @@ const getDirectionByTwoPoints = (p1: IPoint, p2: IPoint): Direction => {
   throw new Error("获取两点方向只适用于标准横竖线")
 }
 
-const simplifyPath = (path: Path): Path => {
-  // TODO
-  return []
+export const simplifyPath = (path: Path): Path => {
+  const newPath = []
+  path.forEach((point: IPoint) => {
+    const pp1 = newPath[newPath.length - 1]
+    const pp2 = newPath[newPath.length - 2]
+    if (isSamePoint(pp1, point)) {
+      return
+    }
+    if (isSamePoint(pp2, point)) {
+      newPath.pop()
+      return
+    }
+    newPath.push(point)
+  })
+  return newPath
+}
+
+const isSamePoint = (p1: IPoint, p2: IPoint): boolean => {
+  if (!p1 || !p2) { return false }
+  // tslint:disable-next-line: no-bitwise
+  return ~~p1.x === ~~p2.x && ~~p1.y === ~~p2.y
 }
 
 const getRectPoints = (rect: IRectangle): IPoint[] => {

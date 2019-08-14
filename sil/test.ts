@@ -97,4 +97,61 @@ describe("check shortest path", () => {
       ],
     )
   })
+
+  it("no gap sil left top down up, top -> rigth", () => {
+    const ret = getShortestPathInDiagram(
+      { left: 0, top: 12, width: 10, height: 10 },
+      { x: 2, y: 12 },
+      Direction.TOP,
+
+      { left: 12, top: 0, width: 10, height: 10 },
+      { x: 22, y: 2 },
+      Direction.RIGHT,
+    )
+    expect(ret).to.be.deep.equal(
+      [
+        { x: 2, y: 12 },
+        { x: 22, y: 12 },
+        { x: 22, y: 2 },
+      ],
+    )
+  })
+
+  it("no gap sil left top down up, top -> bottom", () => {
+    const ret = getShortestPathInDiagram(
+      { left: 0, top: 12, width: 10, height: 10 },
+      { x: 2, y: 12 },
+      Direction.TOP,
+
+      { left: 12, top: 0, width: 10, height: 10 },
+      { x: 13, y: 10 },
+      Direction.BOTTOM,
+    )
+    expect(ret).to.be.deep.equal(
+      [
+        { x: 2, y: 12 },
+        { x: 2, y: 11 },
+        { x: 11, y: 11 },
+        { x: 13, y: 11 },
+        { x: 13, y: 10 },
+      ],
+    )
+  })
+
+  it("rect vertically inside the other rect", () => {
+    const ret = getShortestPathInDiagram(
+      { left: 0, top: 0, width: 10, height: 10 },
+      { x: 10, y: 5 },
+      Direction.RIGHT,
+
+      { left: 16, top: 2, width: 10, height: 8 },
+      { x: 16, y: 5 },
+      Direction.LEFT,
+    )
+    expect(ret).to.be.deep.equal([
+      { x: 10, y: 5 },
+      { x: 13, y: 5 },
+      { x: 16, y: 5 },
+    ])
+  })
 })
