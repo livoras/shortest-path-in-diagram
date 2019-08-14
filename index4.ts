@@ -1,3 +1,5 @@
+import { Direction } from "../interfaces"
+
 interface IRectangle {
   left: number,
   top: number,
@@ -15,13 +17,6 @@ interface ILine {
   to: IPoint,
 }
 
-const enum Direction {
-  TOP = "TOP",
-  RIGHT = "RIGHT",
-  BOTTOM = "BOTTOM",
-  LEFT = "LEFT",
-}
-
 type Path = IPoint[]
 
 /**
@@ -33,7 +28,7 @@ type Path = IPoint[]
  * @param toPoint
  * @param toDirection
  */
-export const getShortestPath = (
+export const getShortestPathInDiagram = (
   fromRect: IRectangle,
   fromPoint: IPoint,
   fromDirection: Direction,
@@ -44,11 +39,15 @@ export const getShortestPath = (
 ): Path => {
   const args: [IRectangle, IPoint, Direction, IRectangle, IPoint, Direction] =
     [fromRect, fromPoint, fromDirection, toRect, toPoint, toDirection]
+  /** 强制策略 */
+  if (isPointInRect(fromPoint, toRect) || isPointInRect(toPoint, fromRect)) {
+    return getPathBySingleInflectionForcelyStrategy(...args)
+  }
   const path = isInverseDirection(fromDirection, toDirection)
     ? getPathByCenterStrategy(...args)
     : getPathBySingleInflectionStrategy(...args)
   if (path) { return path }
-  return getPathByMovingPointStrategy(...args) || getPathBySingleInflectionForcelyStrategy(...args)
+  return getPathByMovingPointStrategy(...args)
 }
 
 /** 判断是否两个方向完全  */
@@ -139,7 +138,7 @@ const getPathBySingleInflectionForcelyStrategy = (
   toRect: IRectangle,
   toPoint: IPoint,
   toDirection: Direction,
-): Path | null => {
+): Path => {
   const sils = getSingleInflectionLinkOfTwoPoints(fromPoint, toPoint)
   return minPaths(sils)
 }
@@ -153,7 +152,7 @@ const getPathByMovingPointStrategy = (
   toRect: IRectangle,
   toPoint: IPoint,
   toDirection: Direction,
-): Path => {
+): Path | null => {
   const [f1, f2] = getMovingPoints(fromPoint, fromRect, fromDirection)
   const [t1, t2] = getMovingPoints(toPoint, toRect, toDirection)
   const headFrom = (path: Path): Path => [fromPoint, ...path]
@@ -247,6 +246,10 @@ const minPaths = (candidates: Path[]): Path => {
   return candidates[minIndex]
 }
 
+const simplifyPath = (path: Path): Path => {
+  // TODO
+}
+
 const getRectPoints = (rect: IRectangle): IPoint[] => {
   const { left: x1, top: y1, width: w1, height: h1 } = rect
   const a = { x: x1, y: y1 }
@@ -302,7 +305,7 @@ const isRegularSegmentIntersected = (a: number, b: number, c: number, d: number)
 /**
  * check x in (num1, num2) or x in (num2, num1)
  */
-const isNumberBetween = (x, num1, num2): boolean => {
+const isNumberBetween = (x: number, num1: number, num2: number): boolean => {
   return (x - num1) * (x - num2) < 0
 }
 
@@ -340,21 +343,21 @@ const isNumberBetween = (x, num1, num2): boolean => {
 //   Direction.TOP,
 // )
 
-const ret = getShortestPath(
-  { left: 0, top: 0, width: 10, height: 10 },
-  { x: 0, y: 2 },
-  // { left: 10, top: 10, width: 100, height: 100 },
-  // { x: 10, y: 20 },
-  // { x: 50, y: 10 },
-  Direction.LEFT,
+// const ret = getShortestPathInDiagram(
+//   { left: 0, top: 0, width: 5, height: 5 },
+//   { x: 5, y: 0 },
+//   // { left: 10, top: 10, width: 100, height: 100 },
+//   // { x: 10, y: 20 },
+//   // { x: 50, y: 10 },
+//   Direction.TOP,
 
-  { left: 8, top: 8, width: 10, height: 10 },
-  { x: 18, y: 17 },
-  // { x: 12, y: 15 },
-  // { left: 130, top: 130, width: 50, height: 100 },
-  // { x: 140, y: 230 },
-  // { x: 180, y: 180 },
-  Direction.RIGHT,
-)
+//   { left: 8, top: 8, width: 10, height: 10 },
+//   { x: 10, y: 18 },
+//   // { x: 12, y: 15 },
+//   // { left: 130, top: 130, width: 50, height: 100 },
+//   // { x: 140, y: 230 },
+//   // { x: 180, y: 180 },
+//   Direction.BOTTOM,
+// )
 
-console.log(ret)
+// console.log(ret)
