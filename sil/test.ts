@@ -154,4 +154,21 @@ describe("check shortest path", () => {
       { x: 16, y: 5 },
     ])
   })
+
+  it("rect horizontally inside the other rect", () => {
+    const ret = getShortestPathInDiagram(
+      { left: 0, top: 0, width: 10, height: 10 },
+      { x: 5, y: 10 },
+      Direction.BOTTOM,
+
+      { left: 2, top: 16, width: 10, height: 8 },
+      { x: 5, y: 16 },
+      Direction.TOP,
+    )
+    expect(ret).to.be.deep.equal([
+      { x: 5, y: 10 },
+      { x: 5, y: 13 },
+      { x: 5, y: 16 },
+    ])
+  })
 })
