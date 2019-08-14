@@ -72,6 +72,22 @@ const getPathByCenterStrategy = (
   /** 中心点 */
   const gapCenter = getGapCenterOfTwoRects(fromRect, toRect)
 
+  /** 中心点在别的地方，移动两次使用 SIL */
+  if (isPointInRect(gapCenter, fromRect) || isPointInRect(gapCenter, toRect)) {
+    const fromMovingPoints = movingTwice(fromPoint, fromRect, fromDirection)
+    const toMovingPoints = movingTwice(toPoint, toRect, toDirection)
+    const newFromPoint = fromMovingPoints[1]
+    const newToPoint = toMovingPoints[1]
+    const fromSils = getSingleInflectionLinkOfTwoPoints(newFromPoint, toPoint)
+    const toSils = getSingleInflectionLinkOfTwoPoints(fromPoint, newToPoint)
+    return minPaths(
+      [
+        ...fromSils.map((sil) => [...fromMovingPoints, ...sil]),
+        ...toSils.map((sil) => [...sil, ...toMovingPoints]),
+      ],
+    )
+  }
+
   /** 水平情况 Path */
   const horizontalCenterPath = [
     fromPoint,
@@ -188,6 +204,11 @@ const getMovingPoints = (point: IPoint, rect: IRectangle, direct: Direction): [I
   }
 }
 
+const movingTwice = (point: IPoint, rect: IRectangle, direct: Direction): Path => {
+  // TODO
+  return []
+}
+
 /** 判断路径是否和矩形都不相交 */
 const getValidPathsByRects = (paths: Path[], rect1: IRectangle, rect2: IRectangle): Path[] => {
   return paths.filter((path) =>
@@ -248,6 +269,7 @@ const minPaths = (candidates: Path[]): Path => {
 
 const simplifyPath = (path: Path): Path => {
   // TODO
+  return []
 }
 
 const getRectPoints = (rect: IRectangle): IPoint[] => {
