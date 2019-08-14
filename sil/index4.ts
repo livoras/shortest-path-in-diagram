@@ -68,23 +68,26 @@ const getPathByCenterStrategy = (
   toPoint: IPoint,
   toDirection: Direction,
 ): Path | null => {
-
   /** 中心点 */
   const gapCenter = getGapCenterOfTwoRects(fromRect, toRect)
 
   /** 中心点在矩形内，没法穿过，移动两次使用 SIL */
   if (isPointInRect(gapCenter, fromRect) || isPointInRect(gapCenter, toRect)) {
     const fromMovingPoints = movingTwice(fromPoint, fromRect, fromDirection, toRect)
-    const toMovingPoints = movingTwice(toPoint, toRect, toDirection, toRect)
-    const newFromPoint = fromMovingPoints[1]
-    const newToPoint = toMovingPoints[1]
+    const toMovingPoints = movingTwice(toPoint, toRect, toDirection, fromRect)
+    const newFromPoint = fromMovingPoints[2]
+    const newToPoint = toMovingPoints[2]
     const fromSils = getSingleInflectionLinkOfTwoPoints(newFromPoint, toPoint)
     const toSils = getSingleInflectionLinkOfTwoPoints(fromPoint, newToPoint)
     return minPaths(
-      [
-        ...fromSils.map((sil) => [...fromMovingPoints, ...sil]),
-        ...toSils.map((sil) => [...sil, ...toMovingPoints]),
-      ],
+      getValidPathsByRects(
+        [
+          ...fromSils.map((sil) => [...fromMovingPoints, ...sil.slice(1)]),
+          ...toSils.map((sil) => [...sil, ...toMovingPoints.slice(1)]),
+        ],
+        fromRect,
+        toRect,
+      ),
     )
   }
 
@@ -136,13 +139,21 @@ const getPathBySingleInflectionStrategy = (
   toDirection: Direction,
 ): Path | null => {
   const sils = getSingleInflectionLinkOfTwoPoints(fromPoint, toPoint)
-  const validPaths = getValidPathsByRects(sils, fromRect, toRect)
-  console.assert(validPaths.length <= 1, "单 SIL 模式，不应该返回多条合法路径")
-  if (validPaths.length === 0) {
+  const paths = getValidPathsByRects(sils, fromRect, toRect)
+
+  let path: Path
+  if (paths.length === 0) {
     return null
+  } else if (paths.length === 1) {
+    path = paths[0]
   } else {
-    return validPaths[0]
+    /** 多条路径只用方向相同的 */
+    const p1 = paths[0]
+    const p2 = paths[1]
+    const direction = getDirectionByTwoPoints(p1[0], p1[1])
+    path = direction === fromDirection ? p1 : p2
   }
+  return path
 }
 
 /** 无视矩形 SIL */
@@ -172,7 +183,7 @@ const getPathByMovingPointStrategy = (
   const [f1, f2] = getMovingPoints(fromPoint, fromRect, fromDirection)
   const [t1, t2] = getMovingPoints(toPoint, toRect, toDirection)
   const headFrom = (path: Path): Path => [fromPoint, ...path]
-  const tialTo = (path: Path): Path => [...path, toPoint]
+  const tailTo = (path: Path): Path => [...path, toPoint]
   const singlePath = (from: IPoint, to: IPoint): Path => {
     return getValidPathsByRects(
       getSingleInflectionLinkOfTwoPoints(from, to),
@@ -183,8 +194,8 @@ const getPathByMovingPointStrategy = (
   const paths = [
     headFrom(singlePath(f1, toPoint)),
     headFrom(singlePath(f2, toPoint)),
-    tialTo(singlePath(fromPoint, t1)),
-    tialTo(singlePath(fromPoint, t2)),
+    tailTo(singlePath(fromPoint, t1)),
+    tailTo(singlePath(fromPoint, t2)),
   ].filter((p) => p.length > 1)
   if (paths.length === 0) { return null }
   return minPaths(paths)
@@ -205,8 +216,27 @@ const getMovingPoints = (point: IPoint, rect: IRectangle, direct: Direction): [I
 }
 
 const movingTwice = (point: IPoint, rect: IRectangle, direct: Direction, rect2: IRectangle): Path => {
-  // TODO
-  return []
+  const nextPairTwoPoints: Path[] = []
+  const [a, b, c, d] = getRectPoints(rect)
+  if (direct === Direction.TOP) {
+    nextPairTwoPoints.push([a, d])
+    nextPairTwoPoints.push([b, c])
+  } else if (direct === Direction.RIGHT) {
+    nextPairTwoPoints.push([b, a])
+    nextPairTwoPoints.push([c, d])
+  } else if (direct === Direction.BOTTOM) {
+    nextPairTwoPoints.push([c, b])
+    nextPairTwoPoints.push([d, a])
+  } else {
+    nextPairTwoPoints.push([a, b])
+    nextPairTwoPoints.push([d, c])
+  }
+  const paths = nextPairTwoPoints.filter((p: Path) => {
+    return !isPointInRect(p[0], rect2) && !isPointInRect(p[1], rect2)
+  })
+  console.assert(paths.length === 1, "平移两次应该只有一条合法路径")
+  const path = paths[0]
+  return [point, ...path]
 }
 
 /** 判断路径是否和矩形都不相交 */
@@ -267,6 +297,18 @@ const minPaths = (candidates: Path[]): Path => {
   return candidates[minIndex]
 }
 
+const getDirectionByTwoPoints = (p1: IPoint, p2: IPoint): Direction => {
+  if (p1.x === p2.x) {
+    return p2.y < p1.y ? Direction.TOP : Direction.BOTTOM
+  }
+
+  if (p1.y === p2.y) {
+    return p2.x < p1.x ? Direction.LEFT : Direction.RIGHT
+  }
+
+  throw new Error("获取两点方向只适用于标准横竖线")
+}
+
 const simplifyPath = (path: Path): Path => {
   // TODO
   return []
@@ -279,6 +321,24 @@ const getRectPoints = (rect: IRectangle): IPoint[] => {
   const c = { x: x1 + w1, y: y1 + h1 }
   const d = { x: x1, y: y1 + h1 }
   return [a, b, c, d]
+}
+
+// num / 2
+// tslint:disable-next-line: no-bitwise
+const half = (num: number): number => num - (num >> 1)
+
+const getRectCrossLines = (rect: IRectangle): [ILine, ILine] => {
+  const mw = rect.left + half(rect.width)
+  const mh = rect.top + half(rect.height)
+  const x = rect.left
+  const y = rect.top
+  return [{
+    from: { x: mw, y },
+    to: { x: mw, y: y + rect.height },
+  }, {
+    from: { x, y: mh },
+    to: { x: x + rect.width, y: mh },
+  }]
 }
 
 /** 判断路径是否和矩形相交 */
@@ -298,11 +358,15 @@ const isRegularLineIntersectedWithRect = (l: ILine, rect: IRectangle): boolean =
   if (isPointInRect(l.from, rect) || isPointInRect(l.to, rect)) {
     return true
   }
-  const [a, b, c, d] = getRectPoints(rect)
-  return isRegularLineIntersected(l, { from: a, to: b }) ||
-    isRegularLineIntersected(l, { from: b, to: c }) ||
-    isRegularLineIntersected(l, { from: c, to: d }) ||
-    isRegularLineIntersected(l, { from: d, to: a })
+  const [c1, c2] = getRectCrossLines(rect)
+  return isRegularLineIntersected(l, c1) || isRegularLineIntersected(l, c2)
+  // const [a, b, c, d] = getRectPoints(rect)
+  // const ret = isRegularLineIntersected(l, { from: a, to: b }) ||
+  //   isRegularLineIntersected(l, { from: b, to: c }) ||
+  //   isRegularLineIntersected(l, { from: c, to: d }) ||
+  //   isRegularLineIntersected(l, { from: d, to: a })
+  // console.log(l, "->", rect, ret)
+  // return ret
 }
 
 const isPointInRect = (point: IPoint, rect: IRectangle): boolean => {
@@ -381,5 +445,3 @@ const isNumberBetween = (x: number, num1: number, num2: number): boolean => {
 //   // { x: 180, y: 180 },
 //   Direction.BOTTOM,
 // )
-
-// console.log(ret)
