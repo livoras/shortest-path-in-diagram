@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "ts-mocha ./sil/test.ts"
+    "test": "ts-mocha ./sil/test.ts && ts-mocha ./test/*"
   },
   "author": "Livoras",
   "license": "MIT",
