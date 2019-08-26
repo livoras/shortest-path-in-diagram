@@ -21,7 +21,9 @@
     "typescript": "^3.5.3"
   },
   "dependencies": {
+    "@types/rx": "^4.1.1",
     "node-dijkstra": "^2.5.0",
+    "rxjs": "^6.5.2",
     "tinyqueue": "^2.0.3"
   }
 }
